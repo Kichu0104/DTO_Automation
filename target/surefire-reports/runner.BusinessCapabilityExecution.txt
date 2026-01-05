@@ -1,4 +1,21 @@
 -------------------------------------------------------------------------------
 Test set: runner.BusinessCapabilityExecution
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 24.99 s -- in runner.BusinessCapabilityExecution
+Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 13.10 s <<< FAILURE! -- in runner.BusinessCapabilityExecution
+Business Capability.Business Capability updation -- Time elapsed: 1.966 s <<< ERROR!
+io.cucumber.junit.UndefinedStepException: 
+The step 'User in the Business Capability page' and 1 other step(s) are undefined.
+You can implement these steps using the snippet(s) below:
+
+@Given("User in the Business Capability page")
+public void user_in_the_business_capability_page() {
+    // Write code here that turns the phrase above into concrete actions
+    throw new io.cucumber.java.PendingException();
+}
+@Then("User will see a success toaster message for capability updation")
+public void user_will_see_a_success_toaster_message_for_capability_updation() {
+    // Write code here that turns the phrase above into concrete actions
+    throw new io.cucumber.java.PendingException();
+}
+
+

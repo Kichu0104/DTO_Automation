@@ -16,5 +16,6 @@ import io.cucumber.junit.CucumberOptions;
         },
         monochrome = true
 )
-public class BusinessCapabilityExecution {    
+public class BusinessCapabilityExecution { 
+           
 }
