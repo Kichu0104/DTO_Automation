@@ -24,10 +24,10 @@ pipeline {
 
     post {
         success {
-            echo 'Build SUCCESS ✅'
+            echo 'Build SUCCESS'
         }
         failure {
-            echo 'Build FAILED ❌'
+            echo 'Build FAILED'
         }
     }
 }
