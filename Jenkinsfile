@@ -7,15 +7,7 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main',
-                    url: 'git@github.com:Kichu0104/DTO_Automation.git',
-                    credentialsId: 'github-ssh'
-            }
-        }
-
-        stage('Build & Test') {
+        stage('Build and Test') {
             steps {
                 bat 'mvn clean test'
             }
