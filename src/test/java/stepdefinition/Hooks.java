@@ -10,6 +10,15 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.Before;
 import io.cucumber.java.After;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.stream.Stream;
+
 public class Hooks {
 
     public static WebDriver driver;
@@ -58,6 +67,52 @@ public class Hooks {
             driver = null;
 
             System.out.println("Browser closed successfully");
+        }
+        
+        // Archive reports after all scenarios complete
+        archiveExecutionReports();
+    }
+
+    /**
+     * Archives the cucumber reports to a timestamped backup folder
+     * This ensures each execution's reports are preserved and not overwritten
+     */
+    private static void archiveExecutionReports() {
+        try {
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+            Path reportSourceDir = Paths.get("target/cucumber-report");
+            Path reportArchiveDir = Paths.get("target/cucumber-report-archive");
+            Path timestampedDir = reportArchiveDir.resolve(timestamp);
+
+            // Create archive directory if it doesn't exist
+            if (!Files.exists(reportArchiveDir)) {
+                Files.createDirectories(reportArchiveDir);
+            }
+
+            // Create timestamped subdirectory
+            Files.createDirectories(timestampedDir);
+
+            // Copy all report files to timestamped directory
+            if (Files.exists(reportSourceDir)) {
+                try (Stream<Path> paths = Files.list(reportSourceDir)) {
+                    paths.filter(Files::isRegularFile)
+                            .forEach(source -> {
+                                try {
+                                    Path destination = timestampedDir.resolve(source.getFileName());
+                                    Files.copy(source, destination, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                                } catch (IOException e) {
+                                    System.err.println("Failed to archive report file: " + source.getFileName());
+                                    e.printStackTrace();
+                                }
+                            });
+                }
+                System.out.println("========================================");
+                System.out.println("✅ Reports archived to: " + timestampedDir);
+                System.out.println("========================================");
+            }
+        } catch (IOException e) {
+            System.err.println("Error archiving execution reports:");
+            e.printStackTrace();
         }
     }
 }
