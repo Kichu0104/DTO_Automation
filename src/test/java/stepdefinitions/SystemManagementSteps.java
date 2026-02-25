@@ -14,10 +14,13 @@ public class SystemManagementSteps {
     int previousPage;
     String oldFirstRowText;
 
+    public SystemManagementSteps() {
+        this.driver = Hooks.getDriver();
+        systemPage = new SystemManagementPage(driver);
+    }
+
     @Given("I navigate to System Management page")
     public void navigate_to_system_management() {
-        driver = Hooks.getDriver();
-        systemPage = new SystemManagementPage(driver);
 
         systemPage.clickAdministrator();
         systemPage.clickContinue();
@@ -26,6 +29,7 @@ public class SystemManagementSteps {
 
         Assert.assertTrue(systemPage.isSystemPageDisplayed());
     }
+
 
     /* ---------- ADD SYSTEM ---------- */
 
@@ -46,11 +50,13 @@ public class SystemManagementSteps {
 
     @And("I enter alias name {string}")
     public void enter_alias(String alias) {
+
         systemPage.enterAliasName(alias);
     }
 
     @And("I enter the description {string}")
-    public void enter_description(String desc) {
+    public void enter_description(String desc)
+    {
         systemPage.enterDescription(desc);
     }
 
@@ -60,22 +66,26 @@ public class SystemManagementSteps {
     }
 
     @And("I select the system life cycle {string}")
-    public void select_lifecycle(String lifecycle) {
+    public void select_lifecycle(String lifecycle)
+    {
         systemPage.selectLifeCycle(lifecycle);
     }
 
     @And("I select the Shadow IT {string}")
     public void select_shadow_it(String value) {
+
         systemPage.selectShadowITValue(value);
     }
 
     @And("I click on the Create button")
     public void click_create() {
+
         systemPage.clickCreate();
     }
 
     @Then("the system should be created successfully")
     public void verify_created() {
+
         systemPage.verifySuccessMessage();
     }
 
@@ -83,6 +93,7 @@ public class SystemManagementSteps {
 
     @When("I click on the view icon")
     public void click_view_icon() {
+
         systemPage.clickFirstViewIcon();
     }
 

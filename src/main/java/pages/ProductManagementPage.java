@@ -5,30 +5,38 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.JavaScriptHelper;
 import utils.WaitUtil;
 import utils.ElementActions;
+import java.time.Duration;
 
 public class ProductManagementPage {
 
-    private WebDriver driver;
-    private WaitUtil waitUtil;
-    private ElementActions elementAction;
-    private JavaScriptHelper js;
-    private Actions actions;
+    WebDriver driver;
+    WebDriverWait wait;
+    JavascriptExecutor js;
+    WaitUtil waitUtil;
+    ElementActions elementAction;
+    JavaScriptHelper jsHelper;
 
     public ProductManagementPage(WebDriver driver) {
         this.driver = driver;
-        this.waitUtil = new WaitUtil(driver);
-        this.elementAction = new ElementActions(driver);
-        this.js = (JavaScriptHelper) driver;
-        this.actions = new Actions(driver);
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        this.js = (JavascriptExecutor) driver;
+        waitUtil = new WaitUtil(driver);
+        elementAction = new ElementActions(driver);
+        jsHelper = new JavaScriptHelper(driver);
+
         PageFactory.initElements(driver, this);
     }
 
     // ================== ADD PRODUCT ==================
 
-    @FindBy(xpath = "//button[normalize-space()='Add Product']")
+    @FindBy(xpath = "//span[normalize-space()='Products']/ancestor::div[@role='button']")
+    private WebElement productMenu;
+
+    @FindBy(xpath = "//button[contains(normalize-space(.), 'Add Product')]")
     private WebElement addProductButton;
 
     @FindBy(xpath = "//h2[normalize-space()='Create New Product']")
@@ -65,13 +73,25 @@ public class ProductManagementPage {
     private WebElement parentTargetAudienceDropdown;
 
     // ---------- ADD PRODUCT ACTIONS ----------
+    public void selectProductFromSideMenu() {
+        productMenu.click();
+        // wait for page to load by waiting for ANY stable element
+        wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.xpath("//h4[contains(.,'Products')]")));
+    }
+//        public void clickAddProduct() {
+//        elementAction.click(addProductButton);
+//        waitUtil.waitForVisible(createProductHeader);
+//    }
 
     public void clickAddProduct() {
-        elementAction.click(addProductButton);
-        waitUtil.waitForVisible(createProductHeader);
+        productMenu.click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[contains(., 'Add Product')]")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(., 'Add Product')]"))).click();
     }
 
-    public void verifyAddProductPopup() {
+    public void verifyAddProductPopup()
+    {
         waitUtil.waitForVisible(createProductHeader);
     }
 
@@ -80,6 +100,7 @@ public class ProductManagementPage {
     }
 
     public void enterParentAliasName(String alias) {
+
         waitUtil.waitForVisibleAndSendKeys(parentAliasName, alias);
     }
 
@@ -87,40 +108,76 @@ public class ProductManagementPage {
         waitUtil.waitForVisibleAndSendKeys(parentDescription, desc);
     }
 
+    public void selectParentProductType(String value) {
+        wait.until(ExpectedConditions.elementToBeClickable(parentProductTypeDropdown)).click();
+        By option = By.xpath("//li[@role='option']//span[normalize-space()='" + value + "']" +
+                " | //li[@role='menuitem']//span[normalize-space()='" + value + "']");
+        wait.until(ExpectedConditions.elementToBeClickable(option)).click();
+    }
+
+    public void selectParentCategory(String value) {
+        wait.until(ExpectedConditions.elementToBeClickable(parentCategoryDropdown)).click();
+        By option = By.xpath("//li[@role='option']//*[contains(normalize-space(.), '" + value + "')] " +
+                "| //div[@role='option']//*[contains(normalize-space(.), '" + value + "')]");
+        wait.until(ExpectedConditions.elementToBeClickable(option)).click();
+    }
+    public void selectParentProductOwner(String ownerName) {
+
+        By dropdownLocator = By.xpath("(//div[@role='combobox'])[1]");
+        // adjust index if needed
+
+        WebElement dropdown = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(dropdownLocator)
+        );
+
+        jsHelper.scrollIntoView(dropdown);
+        jsHelper.clickElement(dropdown);
+
+        // ✅ CRITICAL CHECK → did dropdown open?
+        By listboxLocator = By.xpath("//ul[@role='listbox']");
+
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(listboxLocator));
+        } catch (Exception e) {
+            throw new RuntimeException("Dropdown did NOT open — locator or overlay issue");
+        }
+
+        // ✅ Only runs if dropdown truly opened
+        By searchLocator = By.xpath("//ul[@role='listbox']//input");
+
+        WebElement searchInput = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(searchLocator)
+        );
+
+        searchInput.clear();
+        searchInput.sendKeys(ownerName);
+
+        By optionLocator = By.xpath(
+                "//li[@role='option']//p[normalize-space()='" + ownerName + "']"
+        );
+
+        WebElement option = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(optionLocator)
+        );
+
+        jsHelper.scrollIntoView(option);
+        jsHelper.clickElement(option);
+    }
+
+    public void selectParentLifecycleStage(String value) {
+        wait.until(ExpectedConditions.elementToBeClickable(parentLifecycleStageDropdown)).click();
+        By option = By.xpath("//*[contains(@role,'option') and contains(normalize-space(.), '" + value + "')]");
+        wait.until(ExpectedConditions.elementToBeClickable(option)).click();
+    }
+
     public void enterParentReleaseVersion(String version) {
         waitUtil.waitForVisibleAndSendKeys(parentReleaseVersion, version);
     }
 
-    public void selectParentProductType(String type) {
-        selectFromDropdown(parentProductTypeDropdown, type);
-    }
-
-    public void selectParentCategory(String category) {
-        waitUtil.scrollIntoView(parentCategoryDropdown);
-        waitUtil.jsClick(parentCategoryDropdown);
-
-        By option = By.xpath("//li[@role='option' and .//p[normalize-space()='Name: " + category + "']]");
-        waitUtil.jsClick(waitUtil.waitForElement(option));
-    }
-
-    public void selectParentProductOwner(String owner) {
-        waitUtil.scrollIntoView(parentProductOwnerDropdown);
-        waitUtil.jsClick(parentProductOwnerDropdown);
-
-        WebElement search =
-                waitUtil.waitForElement(By.xpath("//input[contains(@placeholder,'Search')]"));
-        search.sendKeys(owner);
-
-        By option = By.xpath("//div[@role='option' and normalize-space()='" + owner + "']");
-        waitUtil.jsClick(waitUtil.waitForElement(option));
-    }
-
-    public void selectParentLifecycleStage(String stage) {
-        selectFromDropdown(parentLifecycleStageDropdown, stage);
-    }
-
-    public void selectParentTargetAudience(String audience) {
-        selectFromDropdown(parentTargetAudienceDropdown, audience);
+    public void selectParentTargetAudience(String value) {
+        wait.until(ExpectedConditions.elementToBeClickable(parentTargetAudienceDropdown)).click();
+        By option = By.xpath("//*[contains(@role,'option') and contains(normalize-space(.), '" + value + "')]");
+        wait.until(ExpectedConditions.elementToBeClickable(option)).click();
     }
 
     public void clickCreate() {

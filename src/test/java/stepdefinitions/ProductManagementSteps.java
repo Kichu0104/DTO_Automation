@@ -19,6 +19,10 @@ public class ProductManagementSteps {
     }
 
     // ================== ADD PRODUCT ==================
+    @And("I select Product from the side menu")
+    public void i_select_Product_from_the_side_menu(){
+    }
+
     @When("I click on Add Product")
     public void i_click_on_add_product() {
         productPage.clickAddProduct();
@@ -61,6 +65,7 @@ public class ProductManagementSteps {
 
     @When("I enter the release version {string}")
     public void enter_release_version(String version) {
+
         productPage.enterParentReleaseVersion(version);
     }
 

@@ -3,6 +3,8 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -17,9 +19,14 @@ public class SystemManagementPage {
     public SystemManagementPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        PageFactory.initElements(driver, this);
     }
 
-    // ---------- NAVIGATION ----------
+
+
+
+    // ---------- NAVIGATION ---------
+
     public void clickAdministrator() {
         wait.until(ExpectedConditions.elementToBeClickable(By.id("administratorMenu"))).click();
     }
@@ -40,38 +47,128 @@ public class SystemManagementPage {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("systemPageTitle"))).isDisplayed();
     }
 
-    // ---------- ADD SYSTEM ----------
+    // ---------- ADD SYSTEM Locators ----------
+    @FindBy(xpath = "//button[normalize-space()='Add System']")
+    private WebElement addSystemBtn;
+
+    @FindBy(xpath = "//input[@name='full_name']")
+    private WebElement systemFullName;
+
+    @FindBy(xpath = "//input[@name='alias_name']")
+    private WebElement systemAliasName;
+
+    @FindBy(xpath = "//textarea[@name='description']")
+    private WebElement systemDescription;
+
+    /* ===================== SYSTEM OWNER (SEARCHABLE DROPDOWN) ===================== */
+
+    @FindBy(xpath = "//p[contains(normalize-space(),'System Owner')]/following::div[@role='combobox'][1]")
+    private WebElement systemOwnerDropdown;
+
+    /* ===================== OTHER DROPDOWNS ===================== */
+
+    @FindBy(xpath = "//p[contains(normalize-space(),'System Lifecycle')]/following::div[@role='combobox'][1]")
+    private WebElement systemLifecycleDropdown;
+
+    @FindBy(xpath = "//*[@id='_r_b2_']/li[2]/div/span[text()='LifecycleValue']")
+    private WebElement lifecycleDropdownValue;
+
+    @FindBy(xpath = "(//div[@role='combobox'])[3]")
+    private WebElement shadowITDropdown;
+
+    @FindBy(xpath = "//li[@data-value='Yes']/div/span[text()='Yes']")
+    private WebElement shadowDropdownValue;
+
+
+    /* ===================== ACTION BUTTONS ===================== */
+
+    @FindBy(xpath = "//button[contains(normalize-space(),'Create')]")
+    private WebElement createBtn;
+
+    @FindBy(xpath = "//div[contains(text(),'successfully')]")
+    private WebElement toasterMsg;
+
+
+
     public void clickAddSystem() {
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("addSystemBtn"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[normalize-space()='Add System']")
+        )).click();
     }
-
     public boolean isAddSystemPopupVisible() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("addSystemPopup"))).isDisplayed();
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//h2[normalize-space()='Create New System']")
+        )).isDisplayed();
     }
-
     public void enterFullName(String name) {
-        WebElement fullName = wait.until(ExpectedConditions.elementToBeClickable(By.id("systemFullName")));
-        fullName.clear();
-        fullName.sendKeys(name);
+        WebElement field = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.name("full_name"))
+        );
+        field.clear();
+        field.sendKeys(name);
     }
 
     public void enterAliasName(String alias) {
-        WebElement aliasField = wait.until(ExpectedConditions.elementToBeClickable(By.id("systemAlias")));
-        aliasField.clear();
-        aliasField.sendKeys(alias);
+        WebElement field = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.name("alias_name"))
+        );
+        field.clear();
+        field.sendKeys(alias);
     }
 
     public void enterDescription(String desc) {
-        WebElement descField = wait.until(ExpectedConditions.elementToBeClickable(By.id("systemDescription")));
-        descField.clear();
-        descField.sendKeys(desc);
+        WebElement field = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.name("description"))
+        );
+        field.clear();
+        field.sendKeys(desc);
     }
+//    public void selectSystemOwner(String owner) {
+//
+//        System.out.println("Selecting owner: " + owner);
+//
+//        WebElement dropdown = wait.until(
+//                ExpectedConditions.elementToBeClickable(systemOwnerDropdown)
+//        );
+//
+//        dropdown.click();
+//
+//        // ✅ Wait for MUI dropdown container
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(
+//                By.xpath("//ul[contains(@class,'Mui')]")
+//        ));
+//
+//        // ✅ Optional search field
+//        List<WebElement> searchInputs = driver.findElements(
+//                By.xpath("//input[contains(@placeholder,'Search')]")
+//        );
+//
+//        if (!searchInputs.isEmpty()) {
+//            WebElement search = searchInputs.get(0);
+//            search.clear();
+//            search.sendKeys(owner);
+//        }
+//
+//        // ✅ Robust option selection
+//        WebElement option = wait.until(ExpectedConditions.elementToBeClickable(
+//                By.xpath("//li[@role='option'][.//text()[normalize-space()='" + owner + "']]")
+//        ));
+//
+//        option.click();
+//    }
 
     public void selectSystemOwner(String owner) {
-        WebElement ownerDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.id("systemOwner")));
-        ownerDropdown.click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[text()='" + owner + "']"))).click();
+
+        WebElement dropdown = wait.until(ExpectedConditions.elementToBeClickable(systemOwnerDropdown));
+        dropdown.click();
+
+        WebElement option = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//li[normalize-space()='" + owner + "']")
+        ));
+
+        option.click();
     }
+
 
     public void selectLifeCycle(String lifecycle) {
         WebElement lifecycleDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.id("systemLifeCycle")));
@@ -85,8 +182,11 @@ public class SystemManagementPage {
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[text()='" + value + "']"))).click();
     }
 
+
+
+
     public void clickCreate() {
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("createSystemBtn"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(createBtn)).click();
     }
 
     public void verifySuccessMessage() {
@@ -150,4 +250,6 @@ public class SystemManagementPage {
             throw new AssertionError("Page did not advance as expected");
         }
     }
+
 }
+

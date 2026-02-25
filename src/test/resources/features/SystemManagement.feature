@@ -4,7 +4,9 @@ Feature: System Management
     Given I opened the Application
     When I enter valid username "karthikeyan.s@spritle.com" and password "Password@1"
     And I click on login button
-    Then dashboard should be visible
+    Then I am on the Dashboard
+    When I click on Administrator and then click Continue
+    And I navigate to Data Management and click on View MetaData Libraries
     And I navigate to System Management page
 
   @add
@@ -31,11 +33,11 @@ Feature: System Management
     Then search result should be "<result>"
 
     Examples:
-      | keyword        | result            |
-      | Sys 1          | matching          |
-      | System Name 11 | matching          |
-      | Alias 12       | matching          |
-      | adc@test1      | No Records found  |
+      | keyword        | result    |
+      | Sys 1          | matching  |
+      | System Name 11 | matching  |
+      | Alias 12       | matching  |
+      | adc@test1      | noresult  |
 
   @pagination
   Scenario: Verify pagination in System list

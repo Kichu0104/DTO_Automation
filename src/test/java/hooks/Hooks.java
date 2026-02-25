@@ -45,7 +45,8 @@ public class Hooks {
     // ================== BEFORE HOOK ==================
     @Before(order = 0)
     public void setUp() {
-        if (driver == null) { // Ensure driver is created only once
+        if (driver == null) {
+
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
             driver.manage().window().maximize();
@@ -53,14 +54,15 @@ public class Hooks {
         driver.get("http://3.131.133.70:3001/login"); // Navigate to login page
     }
 
-    // ================== AFTER HOOK ==================
-//    @After(order = 0)
-//    public void tearDown() {
-//        if (driver != null) {
-//            driver.quit();
-//            driver = null; // Reset driver so next scenario starts fresh
-//        }
-//    }
+//     ================== AFTER HOOK ==================
+@After(order = 0)
+public void tearDown() {
+    if (driver != null) {
+        driver.quit();
+        driver = null;
+    }
+}
+
 
     // ================== GET DRIVER ==================
     public static WebDriver getDriver() {

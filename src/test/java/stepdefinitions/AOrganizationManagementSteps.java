@@ -1,5 +1,4 @@
 package stepdefinitions;
-
 import io.cucumber.java.en.*;
 import org.junit.Assert;
 import pages.AOrganizationManagementPage;
@@ -17,35 +16,53 @@ public class AOrganizationManagementSteps {
     }
 
     // ===================== BACKGROUND =====================
-    @Then("I am on the Dashboard") public void i_am_on_the_dashboard() { System.out.println("Dashboard page verified"); }
-    @When("I click on Administrator and then click Continue") public void i_click_on_administrator_and_then_click_continue() {
+    @Then("I am on the Dashboard")
+    public void i_am_on_the_dashboard() {
+        System.out.println("Dashboard page verified"); }
+
+    @When("I click on Administrator and then click Continue")
+    public void i_click_on_administrator_and_then_click_continue() {
         orgPage.clickAdministrator(); orgPage.clickContinue();
     }
-    @When("I navigate to Data Management and click on View MetaData Libraries") public void i_navigate_to_data_management_and_click_on_view_metadata_libraries() {
+    @When("I navigate to Data Management and click on View MetaData Libraries")
+    public void i_navigate_to_data_management_and_click_on_view_metadata_libraries() {
         orgPage.navigateToDataManagement(); orgPage.clickViewMetadataLibraries();
     }
     @When("I select Organization from the side menu") public void i_select_organization_from_the_side_menu() {
         orgPage.selectOrganizationFromSideMenu();
     }
 
+    @Then("Organization page should be displayed")
+    public void organization_page_should_be_displayed() {
+        Assert.assertTrue(
+                "Organization page is not displayed",
+                orgPage.isOrganizationPageDisplayed()
+        );
+    }
+
+
     // ===================== CREATE ORGANIZATION =====================
     @When("I click on Add Organization")
     public void i_click_on_add_organization() {
+
         orgPage.clickAddOrganization();
     }
+
     @When("I enter the organization name {string}")
     public void i_enter_the_organization_name(String name) {
 
         orgPage.enterOrganizationName(name);
     }
+
     @When("I enter the organization alias name {string}")
     public void i_enter_the_organization_alias_name(String alias) {
-
         orgPage.enterOrganizationAlias(alias);
     }
+
     @When("I enter the organization description {string}")
     public void i_enter_the_organization_description(String desc)
     {
+
         orgPage.enterOrganizationDescription(desc);
     }
     @When("I select the organization lifecycle {string}")
@@ -62,6 +79,7 @@ public class AOrganizationManagementSteps {
     {
         orgPage.clickSaveOrganization();
     }
+
     @Then("the organization {string} should be created successfully")
     public void the_organization_should_be_created_successfully(String orgName)
     {
@@ -127,10 +145,15 @@ public class AOrganizationManagementSteps {
 
 
     @Then("the organization details page should be displayed")
-    public void the_organization_details_page_should_be_displayed()
-    {
-        Assert.assertTrue(orgPage.isOrganizationDetailsPageDisplayed());
+    public void the_organization_details_page_should_be_displayed() {
+
+        Assert.assertTrue(
+                "Organization details page is not displayed",
+                orgPage.isOrganizationDetailsPageDisplayed()
+        );
     }
+
+
     @Then("the organization name should be {string}")
     public void the_organization_name_should_be(String orgName) {
         Assert.assertEquals(orgName, orgPage.getOrganizationNameFromDetails());

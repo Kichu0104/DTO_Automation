@@ -6,12 +6,11 @@ import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "src/test/resources/features/Login.feature",
+        features = "src/test/resources/features/ProductManagement.feature",
         glue = {"stepdefinitions", "hooks"},
-//        tags = "@smoke",
+        tags = "@smoke",
         plugin = {"pretty", "html:target/cucumber-reports.html"},
         monochrome = true
-
 )
 public class TestRunner {
 }

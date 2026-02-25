@@ -1,26 +1,31 @@
 package utils;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class ElementActions {
+public class JavaScriptHelper {
 
     private WebDriver driver;
-    private WaitUtil waitUtil;
+    private JavascriptExecutor js;
 
-    public ElementActions(WebDriver driver) {
+    public JavaScriptHelper(WebDriver driver) {
         this.driver = driver;
-        this.waitUtil = new WaitUtil(driver);
+        this.js = (JavascriptExecutor) driver;
     }
 
-    public void click(WebElement element) {
-        waitUtil.waitForElementToBeClickable(element);
-        element.click();
+    // Scroll element into view
+    public void scrollIntoView(WebElement element) {
+        js.executeScript("arguments[0].scrollIntoView({block:'center'});", element);
     }
 
-    public void type(WebElement element, String value) {
-        waitUtil.waitForVisible(element);
-        element.clear();
-        element.sendKeys(value);
+    // Click element using JS
+    public void clickElement(WebElement element) {
+        js.executeScript("arguments[0].click();", element);
+    }
+
+    // Optional: set value using JS
+    public void setValue(WebElement element, String value) {
+        js.executeScript("arguments[0].value='" + value + "';", element);
     }
 }

@@ -1,127 +1,73 @@
-package utils;
-
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
-
-public class WaitUtil {
-
-    private WebDriver driver;
-    private WebDriverWait wait;
-
-    public WaitUtil(WebDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(40));
-    }
-
-    // ---------- VISIBILITY ----------
-    public WebElement waitForVisible(WebElement element) {
-        return wait.until(ExpectedConditions.visibilityOf(element));
-    }
-
-    public WebElement waitForVisible(By locator) {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-    }
-
-    // ---------- SEND KEYS (SAFE) ----------
-//    public void waitForVisibleAndSendKeys(WebElement element, String text) {
-//        waitForVisible(element);
-//        try {
-//            element.clear();
-//            element.sendKeys(text);
-//        } catch (ElementNotInteractableException e) {
-//            jsClickWithoutWait(element);   // SAFE fallback
-//            element.clear();
-//            element.sendKeys(text);
+//package hooks;
+//
+//import io.cucumber.java.After;
+//import io.cucumber.java.Before;
+//import org.openqa.selenium.WebDriver;
+//import org.openqa.selenium.chrome.ChromeDriver;
+//import io.github.bonigarcia.wdm.WebDriverManager;
+//
+//public class Hooks {
+//
+//    private static WebDriver driver;
+//
+//    @Before
+//    public void setUp() {
+//        WebDriverManager.chromedriver().setup();
+//        driver = new ChromeDriver();
+//        driver.manage().window().maximize();
+//        driver.get("http://3.131.133.70:3001/login");
+//    }
+//
+//    @After
+//    public void tearDown() {
+//        if (driver != null) {
+//            driver.quit();
 //        }
 //    }
-    public void waitForVisibleAndSendKeys(WebElement element, String text) {
-        try {
-            // Wait for element to be visible and clickable
-            waitForVisibility(element);
-            waitForClickable(element);
+//
+//    public static WebDriver getDriver() {
+//        return driver;
+//    }
+//}
 
-            // Scroll into view just in case
-            scrollIntoView(element);
+package hooks;
 
-            // Click to focus
-            element.click();
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
-            // Clear and type
-            element.clear();
-            element.sendKeys(text);
+public class Hooks {
 
-        } catch (ElementNotInteractableException e) {
-            // JS fallback if normal sendKeys fails
-            jsClickWithoutWait(element);
-            element.clear();
-            element.sendKeys(text);
+    private static WebDriver driver;
+
+    // ================== BEFORE HOOK ==================
+    @Before(order = 0)
+    public void setUp() {
+        if (driver == null) { // Ensure driver is created only once
+            WebDriverManager.chromedriver().setup();
+            driver = new ChromeDriver();
+            driver.manage().window().maximize();
+        }
+        driver.get("http://3.131.133.70:3001/login"); // Navigate to login page
+    }
+
+    //     ================== AFTER HOOK ==================
+    @After(order = 0)
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+            driver = null; // Reset driver so next scenario starts fresh
         }
     }
 
-
-    public WebElement waitForElement(By locator) {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-    }
-    public WebElement waitForVisibleAndEnabled(WebElement element, int seconds) {
-        return new WebDriverWait(driver, Duration.ofSeconds(seconds))
-                .until(driver -> element.isDisplayed() && element.isEnabled() ? element : null);
-    }
-
-    // ---------- CLICK ----------
-    public void click(WebElement element) {
-        waitForVisible(element);
-        element.click();
-    }
-
-    public void jsClick(WebElement element) {
-        waitForVisible(element);
-        jsClickWithoutWait(element);
-    }
-
-    // ⚠️ INTERNAL SAFE JS CLICK
-    private void jsClickWithoutWait(WebElement element) {
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
-    }
-
-    // ---------- SCROLL ----------
-    public void scrollIntoView(WebElement element) {
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].scrollIntoView(true);", element);
-    }
-
-    // ---------- CLICKABLE ----------
-    public WebElement waitForClickable(WebElement element) {
-        return wait.until(ExpectedConditions.elementToBeClickable(element));
-    }
-
-    public WebElement waitForElementToBeClickable(WebElement element) {
-        return wait.until(ExpectedConditions.elementToBeClickable(element));
-    }
-
-    public WebElement waitForClickable(By locator) {
-        return wait.until(ExpectedConditions.elementToBeClickable(locator));
-    }
-    // ---------- VISIBILITY (ALIAS - SAFE) ----------
-    public WebElement waitForVisibility(WebElement element) {
-        return waitForVisible(element);
-    }
-
-    public WebElement waitForVisibility(By locator) {
-        return waitForVisible(locator);
-    }
-
-
-
-
-    // ---------- CUSTOM WAIT ----------
-    public void waitForSeconds(long seconds) {
-        try {
-            Thread.sleep(seconds * 1000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+    // ================== GET DRIVER ==================
+    public static WebDriver getDriver() {
+        if (driver == null) {
+            throw new RuntimeException("Driver is not initialized. Did @Before hook run?");
         }
+        return driver;
     }
 }
+
