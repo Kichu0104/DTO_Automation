@@ -65,7 +65,11 @@ Feature: Organization Management
   Scenario: Add User
     When I click the add user icon of organization "Automation Org75"
     And I click on the Add User button
-    And I enter the username "automation.user75"
-    And I select the role "Automation Admin75"
+    And I enter the username "vigneswariQA"
+    And I select the first role in the list
+    And I check the system user
+    And I enter the email "vigneswari.s+dto@spritle.com"
+    And I enter the password "Password@123"
+    And I select the system role "Admin"
     And I click on the Add User submit button
-    Then the user "automation.user75" should be created successfully
+    Then the user "vigneswariQA" should be created successfully

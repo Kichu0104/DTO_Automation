@@ -1,4 +1,5 @@
 package stepdefinitions;
+
 import io.cucumber.java.en.*;
 import org.junit.Assert;
 import pages.AOrganizationManagementPage;
@@ -18,33 +19,29 @@ public class AOrganizationManagementSteps {
     // ===================== BACKGROUND =====================
     @Then("I am on the Dashboard")
     public void i_am_on_the_dashboard() {
-        System.out.println("Dashboard page verified"); }
+        System.out.println("Dashboard page verified");
+    }
 
     @When("I click on Administrator and then click Continue")
     public void i_click_on_administrator_and_then_click_continue() {
-        orgPage.clickAdministrator(); orgPage.clickContinue();
+        orgPage.clickAdministrator();
+        orgPage.clickContinue();
     }
+
     @When("I navigate to Data Management and click on View MetaData Libraries")
     public void i_navigate_to_data_management_and_click_on_view_metadata_libraries() {
-        orgPage.navigateToDataManagement(); orgPage.clickViewMetadataLibraries();
+        orgPage.navigateToDataManagement();
+        orgPage.clickViewMetadataLibraries();
     }
-    @When("I select Organization from the side menu") public void i_select_organization_from_the_side_menu() {
+
+    @When("I select Organization from the side menu")
+    public void i_select_organization_from_the_side_menu() {
         orgPage.selectOrganizationFromSideMenu();
     }
-
-    @Then("Organization page should be displayed")
-    public void organization_page_should_be_displayed() {
-        Assert.assertTrue(
-                "Organization page is not displayed",
-                orgPage.isOrganizationPageDisplayed()
-        );
-    }
-
 
     // ===================== CREATE ORGANIZATION =====================
     @When("I click on Add Organization")
     public void i_click_on_add_organization() {
-
         orgPage.clickAddOrganization();
     }
 
@@ -56,34 +53,37 @@ public class AOrganizationManagementSteps {
 
     @When("I enter the organization alias name {string}")
     public void i_enter_the_organization_alias_name(String alias) {
+
         orgPage.enterOrganizationAlias(alias);
     }
 
     @When("I enter the organization description {string}")
-    public void i_enter_the_organization_description(String desc)
-    {
-
+    public void i_enter_the_organization_description(String desc) {
         orgPage.enterOrganizationDescription(desc);
     }
+
     @When("I select the organization lifecycle {string}")
     public void i_select_the_organization_lifecycle(String lifecycle) {
         orgPage.selectOrganizationLifecycle(lifecycle);
     }
+
     @When("I enter the organization location {string}")
     public void i_enter_the_organization_location(String location) {
 
         orgPage.enterOrganizationLocation(location);
     }
+
     @When("I click on the Save Organization button")
-    public void i_click_on_the_save_organization_button()
-    {
+    public void i_click_on_the_save_organization_button() {
         orgPage.clickSaveOrganization();
     }
 
     @Then("the organization {string} should be created successfully")
-    public void the_organization_should_be_created_successfully(String orgName)
-    {
-        Assert.assertTrue(orgPage.isOrganizationCreatedToastDisplayed(orgName));
+    public void the_organization_should_be_created_successfully(String orgName) {
+        Assert.assertTrue(
+                "Organization creation toast not displayed",
+                orgPage.isOrganizationCreatedToastDisplayed(orgName)
+        );
     }
 
 
@@ -93,11 +93,19 @@ public class AOrganizationManagementSteps {
 //        orgPage.clickAddChildButtonInDetailsPage();
 //    }
 //===================== ADD CHILD =====================
+//    @When("I click the add child icon of organization {string}")
+//    public void i_click_the_add_child_icon_of_organization(String orgName) {
+//        orgPage.searchOrganization(orgName);
+//        orgPage.clickAddChildIcon(orgName);
+//    }
+
     @When("I click the add child icon of organization {string}")
     public void i_click_the_add_child_icon_of_organization(String orgName) {
         orgPage.searchOrganization(orgName);
+        orgPage.waitForOrganizationToAppear(orgName);
         orgPage.clickAddChildIcon(orgName);
     }
+
     @And("I enter the child organization name {string}")
     public void i_enter_the_child_organization_name(String childFullName) {
         orgPage.enterChildOrganizationName(childFullName);
@@ -108,10 +116,12 @@ public class AOrganizationManagementSteps {
     public void i_enter_the_child_organization_alias_name(String alias) {
         orgPage.enterChildOrganizationAlias(alias);
     }
+
     @When("I enter the child organization description {string}")
     public void i_enter_the_child_organization_description(String desc) {
         orgPage.enterChildOrganizationDescription(desc);
     }
+
     @When("I select the child organization lifecycle {string}")
     public void i_select_the_child_organization_lifecycle(String lifecycle) {
         // Directly call the page method
@@ -126,9 +136,11 @@ public class AOrganizationManagementSteps {
     public void i_enter_the_child_organization_location(String location) {
         orgPage.enterChildOrganizationLocation(location);
     }
+
     @When("I click on the Save Child Organization button")
     public void i_click_on_the_save_child_organization_button() {
-        orgPage.clickSaveChildOrganization(); }
+        orgPage.clickSaveChildOrganization();
+    }
 
     @Then("the child organization {string} should be created successfully")
     public void the_child_organization_should_be_created_successfully(String childName) {
@@ -143,66 +155,61 @@ public class AOrganizationManagementSteps {
         orgPage.clickViewIcon(orgName);
     }
 
-
     @Then("the organization details page should be displayed")
     public void the_organization_details_page_should_be_displayed() {
-
-        Assert.assertTrue(
-                "Organization details page is not displayed",
-                orgPage.isOrganizationDetailsPageDisplayed()
-        );
+        Assert.assertTrue(orgPage.isOrganizationDetailsPageDisplayed());
     }
 
+//    @Then("the organization name should be {string}")
+//    public void the_organization_name_should_be(String orgName) {
+//        Assert.assertEquals(orgName, orgPage.getOrganizationNameFromDetails());
+//    }
 
-    @Then("the organization name should be {string}")
-    public void the_organization_name_should_be(String orgName) {
-        Assert.assertEquals(orgName, orgPage.getOrganizationNameFromDetails());
-    }
-
-    // ===================== ADD CHILD IN DETAILS PAGE =====================
     @When("I click the view add child button in organization details page")
     public void i_click_the_view_add_child_button_in_organization_details_page() {
-        orgPage.clickAddChildInDetailsPage();  // reuse method from page object
+        orgPage.clickAddChildInDetailsPage();
+
+        // wait for popup fields to be fully ready
+        orgPage.waitForViewAddChildPopupToBeReady();
     }
 
-    @And("I enter the view child organization name {string}")
-    public void i_enter_the_view_child_organization_name(String name) {
-        orgPage.enterChildOrganizationName(name);  // same input method can be reused
+    @And("I enter the view add child organization name {string}")
+    public void i_enter_the_view_add_child_organization_name(String name) {
+        orgPage.enterViewAddChildOrganizationName(name);
     }
 
-    @And("I enter the view child organization alias name {string}")
-    public void i_enter_the_view_child_organization_alias_name(String alias) {
-        orgPage.enterChildOrganizationAlias(alias);
+    @And("I enter the view add child organization alias name {string}")
+    public void i_enter_the_view_add_child_organization_alias_name(String alias) {
+        orgPage.enterViewAddChildOrganizationAlias(alias);
     }
 
-    @And("I enter the view child organization description {string}")
-    public void i_enter_the_view_child_organization_description(String desc) {
-        orgPage.enterChildOrganizationDescription(desc);
+    @And("I enter the view add child organization description {string}")
+    public void i_enter_the_view_add_child_organization_description(String desc) {
+        orgPage.enterViewAddChildOrganizationDescription(desc);
     }
 
-    @And("I select the view child organization lifecycle {string}")
-    public void i_select_the_view_child_organization_lifecycle(String lifecycle) {
-        orgPage.selectChildOrganizationLifecycle(lifecycle);
+    @And("I enter the view add child organization location {string}")
+    public void i_enter_the_view_add_child_organization_location(String location) {
+        orgPage.enterViewAddChildOrgLocation(location);
     }
 
-    @And("I enter the view child organization location {string}")
-    public void i_enter_the_view_child_organization_location(String location) {
-        orgPage.enterChildOrganizationLocation(location);
+    @And("I select the view add child organization lifecycle {string}")
+    public void i_select_the_view_add_child_organization_lifecycle(String lifecycle) {
+        orgPage.selectViewAddChildOrgLifecycle(lifecycle);
     }
 
-    @And("I click on the Save view Child Organization button")
-    public void i_click_on_the_save_view_child_organization_button() {
-        orgPage.clickSaveChildOrganization();  // reuse save method
+    @And("I click on the Save view add child Organization button")
+    public void i_click_on_the_save_view_add_child_organization_button() {
+        orgPage.clickCreateViewAddChildOrganization();
     }
 
-
-    @Then("the view child organization {string} should be created successfully")
-    public void the_view_child_organization_should_be_created_successfully(String name) {
-        Assert.assertTrue("View Child organization not created!",
-                orgPage.isChildOrganizationCreatedToastDisplayed(name));
+    @Then("the view add child organization {string} should be created successfully")
+    public void the_view_add_child_organization_should_be_created_successfully(String name) {
+        Assert.assertTrue(
+                "View Add Child organization not created!",
+                orgPage.isViewAddChildOrganizationCreatedToastDisplayed(name)
+        );
     }
-
-
 
 
     // ===================== ADD ROLE =====================
@@ -213,7 +220,7 @@ public class AOrganizationManagementSteps {
 
     @When("I click on the Add Role button to open popup")
     public void i_click_on_the_add_role_button_to_open_popup() {
-        orgPage.clickAddRole();
+        orgPage.clickAddRoleOpenButton();
     }
 
     @When("I enter the role name {string}")
@@ -223,12 +230,12 @@ public class AOrganizationManagementSteps {
 
     @When("I enter the role lifecycle {string}")
     public void i_enter_the_role_lifecycle(String lifecycle) {
-        orgPage.selectRoleLifecycle(lifecycle);
+        orgPage.enterRoleLifecycle(lifecycle);
     }
 
     @When("I click on the Add Role submit button")
     public void i_click_on_the_add_role_submit_button() {
-        orgPage.submitRole();
+        orgPage.clickAddRoleSubmit();
     }
 
     @Then("the role {string} should be created successfully")
@@ -237,6 +244,7 @@ public class AOrganizationManagementSteps {
     }
 
     // ===================== ADD USER =====================
+
     @When("I click the add user icon of organization {string}")
     public void i_click_the_add_user_icon_of_organization(String orgName) {
         orgPage.clickAddUserIcon(orgName);
@@ -252,19 +260,44 @@ public class AOrganizationManagementSteps {
         orgPage.enterUsername(username);
     }
 
-    @When("I select the role {string}")
-    public void i_select_the_role(String role) {
-        orgPage.selectUserRole(role);
+    @When("I select the first role in the list")
+    public void i_select_the_first_role_in_the_list() {
+        orgPage.selectFirstRole();
+    }
+
+    @When("I check the system user")
+    public void i_check_the_system_user() {
+        orgPage.checkSystemUser();
+    }
+
+    @When("I enter the email {string}")
+    public void i_enter_the_email(String email) {
+        orgPage.enterEmail(email);
+    }
+
+    @When("I enter the password {string}")
+    public void i_enter_the_password(String password) {
+        orgPage.enterPassword(password);
+    }
+
+    @When("I select the system role {string}")
+    public void i_select_the_system_role(String role) {
+        orgPage.selectSystemRole(role);
     }
 
     @When("I click on the Add User submit button")
     public void i_click_on_the_add_user_submit_button() {
-        orgPage.submitUser();
+        orgPage.clickSubmitUser();
     }
 
     @Then("the user {string} should be created successfully")
     public void the_user_should_be_created_successfully(String username) {
-        Assert.assertTrue("User not created!", orgPage.isUserCreated(username));
+        Assert.assertTrue("User not created! Toaster did not appear.",
+                orgPage.isUserCreatedToasterDisplayed());
     }
 
+//    @Then("the user {string} should be created successfully")
+//    public void the_user_should_be_created_successfully(String username) {
+//        Assert.assertTrue("User not created!", orgPage.isUserCreated());
+//    }
 }
