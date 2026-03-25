@@ -10,7 +10,6 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.Before;
 import io.cucumber.java.After;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -68,7 +67,7 @@ public class Hooks {
 
             System.out.println("Browser closed successfully");
         }
-        
+
         // Archive reports after all scenarios complete
         archiveExecutionReports();
     }
