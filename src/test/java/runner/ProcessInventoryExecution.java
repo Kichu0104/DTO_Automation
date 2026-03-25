@@ -8,13 +8,20 @@ import io.cucumber.junit.CucumberOptions;
  * Test Runner for Business Capability automation tests
  * Executes Cucumber tests with specified configurations
  */
-
 @RunWith(Cucumber.class)
-@CucumberOptions(features = "src/test/resources/feature/BusinessCapability.feature", glue = "stepdefinition", tags = "@businessCapability", plugin = {
+@CucumberOptions(
+        features = "src/test/resources/feature/ProcessInventory.feature",
+        glue = "stepdefinition",
+        tags = "@ProcessInventory",
+        plugin = {
                 "pretty",
                 "html:target/cucumber-report/cucumber-report.html",
                 "json:target/cucumber-report/cucumber-report.json",
                 "junit:target/cucumber-report/cucumber-report.xml"
-}, monochrome = true, dryRun = false, publish = true)
-public class BusinessCapabilityExecution {
+        },
+        monochrome = true,
+        dryRun = false,
+        publish = true
+)
+public class ProcessInventoryExecution {
 }
