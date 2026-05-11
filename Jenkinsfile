@@ -1,25 +1,48 @@
 pipeline {
     agent any
 
-    tools {
-        jdk 'Java'
-        maven 'Maven'
+    triggers {
+        cron('0 22 * * *')
     }
 
     stages {
-        stage('Build and Test') {
+
+        stage('Checkout') {
             steps {
-                bat 'mvn clean test'
+                git branch: 'main',
+                url: 'https://github.com/Kichu1014/DTO_Automation.git'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'mvn clean test'
             }
         }
     }
 
     post {
-        success {
-            echo 'Build SUCCESS'
+
+        always {
+
+            junit '**/surefire-reports/*.xml'
+
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'test-output',
+                reportFiles: 'emailable-report.html',
+                reportName: 'Automation Report'
+            ])
         }
+
+        success {
+            echo 'Execution Successful'
+        }
+
         failure {
-            echo 'Build FAILED'
+            echo 'Execution Failed'
         }
     }
 }
