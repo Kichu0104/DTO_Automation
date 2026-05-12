@@ -10,13 +10,14 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                url: 'https://github.com/Kichu1014/DTO_Automation.git'
+                credentialsId: 'github-ssh',
+                url: 'https://github.com/Kichu0104/DTO_Automation.git'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'mvn clean test'
+                bat 'mvn clean test'
             }
         }
     }
@@ -27,8 +28,8 @@ pipeline {
 
             junit '**/surefire-reports/*.xml'
 
-            publishHTML([
-                allowMissing: false,
+            publishHTML(target: [
+                allowMissing: true,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
                 reportDir: 'test-output',
